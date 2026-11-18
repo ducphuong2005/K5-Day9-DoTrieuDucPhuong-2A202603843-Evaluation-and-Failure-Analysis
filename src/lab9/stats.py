@@ -92,13 +92,23 @@ def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int
 def pass_at_k(n: int, c: int, k: int) -> float:
     """Probability that AT LEAST ONE of k trials drawn from n (c of them passing) passes.
     Unbiased estimator (Chen et al. 2021): 1 - C(n-c, k) / C(n, k). Raise ValueError if k > n."""
-    # TODO M6
-    raise NotImplementedError
+    import math
+    if k <= 0 or k > n or c > n:
+        raise ValueError(f"pass_at_k: invalid args n={n}, c={c}, k={k}")
+    # C(n-c, k): if n-c < k, combinatorics gives 0 (can't pick k from fewer than k items)
+    num = math.comb(n - c, k)
+    den = math.comb(n, k)
+    return 1.0 - num / den
 
 
 def pass_hat_k(n: int, c: int, k: int) -> float:
     """pass^k (tau-bench, Yao et al. 2024): probability that ALL k trials drawn from n pass.
     Unbiased estimator: C(c, k) / C(n, k). Raise ValueError if k > n.
     pass^k <= pass@1 <= pass@k; a reliable agent keeps pass^k close to pass@1."""
-    # TODO M6
-    raise NotImplementedError
+    import math
+    if k <= 0 or k > n or c > n:
+        raise ValueError(f"pass_hat_k: invalid args n={n}, c={c}, k={k}")
+    # C(c, k): if c < k, returns 0 → pass^k = 0
+    num = math.comb(c, k)
+    den = math.comb(n, k)
+    return num / den
